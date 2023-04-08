@@ -3,6 +3,13 @@ from pydub import AudioSegment
 from pydub.silence import split_on_silence
 import os
 import glob
+import json
+
+
+def load_config(file_path):
+    with open(file_path, 'r') as f:
+        _config = json.load(f)
+    return _config
 
 
 def load_audio_file(file_path):
@@ -44,19 +51,19 @@ def transcribe_audio_chunks(audio_chunks, language='en-US', min_silence_len=500)
     return transcript
 
 
-def process_audio_file(file_path):
+def process_audio_file(file_path, language, min_silence_len, silence_thresh):
     audio = load_audio_file(file_path)
-    audio_chunks = split_audio_on_silence(audio)
-    transcript = transcribe_audio_chunks(audio_chunks, language='ru-RU')
+    audio_chunks = split_audio_on_silence(audio, min_silence_len, silence_thresh)
+    transcript = transcribe_audio_chunks(audio_chunks, language, min_silence_len)
     return transcript
 
 
-def process_directory(input_directory):
+def process_directory(input_directory, language, min_silence_len, silence_thresh):
     wav_files = glob.glob(os.path.join(input_directory, "*.wav"))
 
     for wav_file in wav_files:
         print(f"Processing {wav_file}")
-        transcript = process_audio_file(wav_file)
+        transcript = process_audio_file(wav_file, language, min_silence_len, silence_thresh)
         output_file = os.path.splitext(wav_file)[0] + ".txt"
 
         with open(output_file, "w") as f:
@@ -65,5 +72,10 @@ def process_directory(input_directory):
 
 
 if __name__ == "__main__":
-    input_directory = "/mnt/d/voices/"  # replace with your directory path
-    process_directory(input_directory)
+    config = load_config('config.json')
+    process_directory(
+        config["input_dir"],
+        config["language"],
+        config["min_silence_len"],
+        config["silence_thresh"]
+    )

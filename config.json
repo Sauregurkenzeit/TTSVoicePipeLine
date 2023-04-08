@@ -1,0 +1,9 @@
+{
+  "input_dir": "/mnt/d/voices",
+  "output_dir": "/mnt/d/voices/",
+  "vocal_remover_dir": "/home/tf/vocal-remover/",
+  "main_dir": "/mnt/c/Users/Alexey/PycharmProjects/TTSVoicePipeline",
+  "language": "en-US",
+  "min_silence_len": 200,
+  "silence_thresh": -32
+}
